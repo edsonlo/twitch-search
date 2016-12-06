@@ -1,0 +1,35 @@
+.streamImage {
+  float:left;
+}
+
+.streamTemplate {
+  overflow: auto;
+  margin: 5px;
+  padding: 5px;
+}
+
+.streamHeader {
+  font-size: 24px;
+}
+
+.streamBody {
+  font-size: 16px;
+}
+
+.streamInfo {
+  float:left;
+  padding-left: 5px;
+}
+
+.searchResults {
+  clear: both;
+  overflow-y: auto;
+}
+
+.totalResults {
+  float:left;
+}
+
+.paging {
+  float:right;
+}
