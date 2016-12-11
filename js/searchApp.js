@@ -151,6 +151,7 @@ class SearchApp {
     });
 
     document.getElementById("searchResults").appendChild(wrapperDiv);
+    window.scrollTo(0,0);
   }
 
   createStreamDiv(stream) {
