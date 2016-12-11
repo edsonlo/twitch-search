@@ -1,78 +1,132 @@
 const twitchURI = "https://api.twitch.tv/kraken/search/streams";
 const clientID = "5gf843clbfohl8wxwvw4h37653sdya6";
 
-searchApp = {
-  runQuery: function(queryURI) {
-    console.log(queryURI);
-    let script = document.createElement("script");
-    script.id = "jsonpQuery";
-    script.src = queryURI;
-    document.getElementsByTagName("head")[0].appendChild(script);
-  },
+class SearchApp {
 
-  createQuery: function() {
+  constructor(searchBoxId, searchButtonId) {
+    this.counter = 0;
+
+    document.getElementById(searchBoxId).addEventListener("keyup", (event) => {
+      let key = event.which || event.keyCode;
+      if(key === 13) {
+        this.doSearch(this.createQuery());
+      }
+    });
+    document.getElementById(searchButtonId).addEventListener("click", () => {
+      this.doSearch(this.createQuery());
+    });
+
+    this.processResults = this.processResults.bind(this);
+  }
+
+  doSearch(queryURI) {
+    this.runJSONPQuery(queryURI)
+    .then(this.processResults)
+    .catch((error) => {
+      console.log(error);
+      document.getElementById("searchResults").innerHTML = "Oops! Something went wrong, try again";
+    });
+  }
+
+  runJSONPQuery(queryURI) {
+    return new Promise((resolve, reject) => {
+      let callbackName = `processResults${this.counter++}`;
+
+      let jsonpScript = document.createElement("script");
+      jsonpScript.id = "jsonpQuery";
+      jsonpScript.src = `${queryURI}&callback=${callbackName}`;
+      jsonpScript.onerror = reject;
+
+      document.getElementsByTagName("head")[0].appendChild(jsonpScript);
+
+      window[callbackName] = function(data) {
+        if(data.streams && data.streams.length === 0) {
+          reject(new Error("No data returned"));
+        }
+        resolve(data);
+
+        window[callbackName] = null;
+        delete window[callbackName];
+        document.getElementsByTagName("head")[0].removeChild(jsonpScript);
+      }
+    })
+  }
+
+  createQuery() {
     let queryString = document.getElementById("searchQuery").value;
-    console.log(queryString);
     if(queryString === null || queryString === "") {
       alert('Please type a search string');
       return false;
     }
-    let queryURI = `${twitchURI}?q=${encodeURIComponent(queryString)}&client_id=${clientID}&callback=searchApp.processResults`;
-    console.log(queryURI);
+  //  let queryURI = `${twitchURI}?q=${encodeURIComponent(queryString)}&client_id=${clientID}&callback=SearchApp.processResults`;
+    let queryURI = `${twitchURI}?q=${encodeURIComponent(queryString)}&client_id=${clientID}`;
+
     return queryURI;
-  },
+  }
 
-  processResults: function(data) {
-    console.log(data);
-    document.getElementsByTagName("head")[0].removeChild(document.getElementById("jsonpQuery"));
-    searchApp.updatePager(data._total, data._links);
-    searchApp.clearResults();
-    data.streams.map(searchApp.showStreamInfo);
-  },
+  processResults(data) {
+    this.clearResults();
+    this.showStreamInfo(data.streams);
+    this.updatePager(data._total, data._links);
+  }
 
-  updatePager: function(total, links) {
+  updatePager(total, links) {
     let pages = Math.ceil(total/10);
     let offset = 0;
     let curLink = links.self;
     if(curLink.indexOf('offset') != -1) {
-      offset = searchApp.calcOffset(curLink);
+      offset = this.calcOffset(curLink);
     }
     let pageNum = Math.floor(offset/10) + 1;
 
     document.getElementById("totalResults").innerHTML = total;
     document.getElementById("pageTotal").innerHTML = `${pageNum}/${pages}`;
 
-    searchApp.updateButtonState(pageNum, pages, links.prev, links.next);
-  },
+    this.updateButtonState(pageNum, pages, links.prev, links.next);
+  }
 
-  updateButtonState: function(pageNum, pages, prevLink, nextLink) {
+  updateButtonState(pageNum, pages, prevLink, nextLink) {
     let prevButton = document.getElementById("prevButton");
     let nextButton = document.getElementById("nextButton");
+
+    let app = this;
 
     pageNum === 1 ? prevButton.disabled = true : prevButton.disabled = false;
     if(prevLink !== null && prevLink !== undefined) {
       prevButton.onclick = function() {
-        searchApp.runQuery(`${prevLink}&client_id=${clientID}&callback=searchApp.processResults`);
+        app.doSearch(`${prevLink}&client_id=${clientID}`);
       }
     }
     pageNum === pages ? nextButton.disabled = true : nextButton.disabled = false;
     if(nextLink !== null && nextLink !== undefined) {
       nextButton.onclick = function() {
-        searchApp.runQuery(`${nextLink}&client_id=${clientID}&callback=searchApp.processResults`);
+        app.doSearch(`${nextLink}&client_id=${clientID}`);
       }
     }
 
-  },
+  }
 
-  clearResults: function() {
+  clearResults() {
     var searchResultsDiv = document.getElementById("searchResults")
     while (searchResultsDiv.firstChild) {
         searchResultsDiv.removeChild(searchResultsDiv.firstChild);
     }
-  },
+  }
 
-  showStreamInfo: function(stream) {
-    console.log(stream);
+  showStreamInfo(streams) {
+    // create a wrapper div so all streams get added at once
+    let wrapperDiv = document.createElement("div");
+    wrapperDiv.id = "resultsWrapper";
+
+    let streamDivs = streams.map(this.createStreamDiv);
+    streamDivs.map(div => {
+      wrapperDiv.appendChild(div);
+    });
+
+    document.getElementById("searchResults").appendChild(wrapperDiv);
+  }
+
+  createStreamDiv(stream) {
     const { channel: {display_name: streamName,
                       status: description,
                       url: linkUrl},
@@ -83,11 +137,18 @@ searchApp = {
     let div = document.createElement("div");
     div.className = "streamTemplate";
     // image
+    let imgLink = document.createElement("a");
+    imgLink.href = linkUrl;
+    imgLink.target = "_blank";
+    imgLink.className = "streamImgLink";
+
     let img = document.createElement("img");
     img.src = stream.preview.medium;
     img.alt = streamName;
     img.className = "streamImage";
-    div.appendChild(img);
+    imgLink.appendChild(img);
+    div.appendChild(imgLink);
+
     // stream info
     let infoDiv = document.createElement("div");
     infoDiv.className = "streamInfo";
@@ -113,11 +174,10 @@ searchApp = {
     infoDiv.appendChild(descDiv);
     div.appendChild(infoDiv);
 
-    document.getElementById("searchResults").appendChild(div);
+    return div;
+  }
 
-  },
-
-  calcOffset: function(link) {
+  calcOffset(link) {
     let parts = link.split('?');
     let params = parts[1].split('&');
     for(let i = 0; i < params.length; i++) {

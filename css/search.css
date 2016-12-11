@@ -1,3 +1,110 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0px;
+}
+
+/* Search Box */
+@media screen and (min-width: 768px) {
+  .wrapper {
+    margin: 0 auto;
+    width: 90%;
+  }
+}
+
+.searchHeader {
+  background: -webkit-linear-gradient(top, #222B7F, #4068C6);
+  background: -moz-linear-gradient(top, #222B7F, #4068C6);
+  background: -ms-linear-gradient(top, #222B7F, #4068C6);
+  background: -o-linear-gradient(top, #222B7F, #4068C6);
+  background: linear-gradient(top, #222B7F, #4068C6);
+  position: fixed;
+  background-color: white;
+  min-width: 89.9%;
+  height: 100px;
+  border: 1px solid black;
+  z-index: 10;
+}
+
+.searchBody {
+  position: relative;
+  padding: 5px;
+  top: 100px;
+  min-height: 100%;
+  border: 1px solid black;
+  border-top: 0px;
+}
+
+#searchBox {
+  position: relative;
+  width: 300px;
+  height: 30px;
+  top: 50px;
+  left: 30px;
+}
+
+#searchQuery {
+    margin: 0px 10px;
+}
+
+input::-webkit-input-placeholder {
+  font-style: italic;
+}
+
+input:-moz-placeholder {
+  font-style: italic;
+}
+
+input::-moz-placeholder {
+  font-style: italic;
+}
+
+input:-ms-input-placeholder {
+  font-style: italic;
+}
+
+input::-ms-input-placeholder {
+  font-style: italic;
+}
+
+.button {
+  padding: 2px 20px;
+  border-radius: 5px;
+  box-shadow: none;
+}
+
+/* Paging Styles */
+.pager {
+  top: 100px;
+}
+
+.totalResults {
+  float:left;
+  margin: 15px;
+}
+
+.paging {
+  float:right;
+  margin: 15px;
+}
+
+#pageTotal {
+  display: inline-block;
+  text-align: center;
+  width: 50px;
+}
+
+
+/* Result List Style */
+.searchResults {
+  min-height: 100px;
+  top: 50px;
+  left:0px;
+  right:0px;
+  bottom:0px;
+  clear: both;
+  overflow-y: auto;
+}
+
 .streamImage {
   float:left;
 }
@@ -10,6 +117,8 @@
 
 .streamHeader {
   font-size: 24px;
+  text-decoration: none;
+  color: #2A5DB0;
 }
 
 .streamBody {
@@ -21,15 +130,36 @@
   padding-left: 5px;
 }
 
-.searchResults {
-  clear: both;
-  overflow-y: auto;
+
+
+
+/* Button Styles */
+.arrowButton {
+  position: relative;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  border: 0px;
+  padding: 0px;
+  outline: 0px;
 }
 
-.totalResults {
-  float:left;
+#prevButton {
+  background: url(../images/leftArrow.png) no-repeat;
+  cursor: pointer;
 }
 
-.paging {
-  float:right;
+#prevButton:disabled {
+  background: url(../images/leftArrow_disabled.png) no-repeat;
+  cursor: auto;
+}
+
+#nextButton {
+  background: url(../images/rightArrow.png) no-repeat;
+  cursor: pointer;
+}
+
+#nextButton:disabled {
+  background: url(../images/rightArrow_disabled.png) no-repeat;
+  cursor: auto;
 }

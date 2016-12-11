@@ -1,23 +1,38 @@
+<!DOCTYPE html>
 <html>
-<head title="Edson Lo Twitch Search App">
+<head>
+  <title>Edson Lo's Twitch Stream Search App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
   <link rel="stylesheet" type="text/css" href="css/search.css" >
 </head>
 <body>
-  <div>
-    <div id="searchBox">
-      <input id="searchQuery" type="text" /><input id="searchButton" type="button" value="Search" />
-    <div id="pager">
-      <div class="totalResults"><span>Total results:</span><span id="totalResults">0</span></div>
-      <div class="paging"><input id="prevButton" type="button" value="Prev" disabled /><span id="pageTotal">1/1</span><input id="nextButton" type="button" value="Next" disabled /></div>
+  <div class="wrapper">
+    <div class="searchHeader">
+      <div id="searchBox">
+        <input id="searchQuery" type="text" placeholder="Search query..."/><input id="searchButton" class="button" type="button" value="Search" />
+      </div>
     </div>
-    <div id="searchResults" class="searchResults"/>
+    <div class="searchBody">
+      <div id="pager">
+        <div class="totalResults"><span>Total results:</span><span id="totalResults">0</span></div>
+        <div class="paging">
+          <input id="prevButton" class="arrowButton" type="button" disabled />
+          <span id="pageTotal">0/0</span>
+          <input id="nextButton" class="arrowButton" type="button" disabled />
+        </div>
+      </div>
+      <div id="searchResults" class="searchResults" ></div>
+    </div>
   </div>
 
+
   <script type="text/javascript" src="js/utils.js" ></script>
-  <script type="text/javascript" src="js/searchUtils.js" ></script>
+  <script type="text/javascript" src="js/searchApp.js" ></script>
   <script>
-    document.getElementById("searchButton").addEventListener("click", () => {searchApp.runQuery(searchApp.createQuery())} );
+    let searchApp = new SearchApp("searchQuery", "searchButton");
+
+  //  document.getElementById("searchButton").addEventListener("click", () => {searchApp.runQuery(searchApp.createQuery())} );
   </script>
 </body>
 </html>
