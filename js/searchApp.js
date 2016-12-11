@@ -24,7 +24,11 @@ class SearchApp {
     .then(this.processResults)
     .catch((error) => {
       console.log(error);
-      document.getElementById("searchResults").innerHTML = "Oops! Something went wrong, try again";
+      let errorDiv = document.createElement("div");
+      errorDiv.className = "streamTemplate";
+      errorDiv.innerHTML = "Oops! Something went wrong, try again";
+      this.clearResults();
+      document.getElementById("searchResults").appendChild(errorDiv);
     });
   }
 
@@ -144,7 +148,7 @@ class SearchApp {
 
     let img = document.createElement("img");
     img.src = stream.preview.medium;
-    img.alt = streamName;
+    img.alt = `Stream ${streamName}`;
     img.className = "streamImage";
     imgLink.appendChild(img);
     div.appendChild(imgLink);

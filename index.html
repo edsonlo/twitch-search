@@ -10,16 +10,16 @@
   <div class="wrapper">
     <div class="searchHeader">
       <div id="searchBox">
-        <input id="searchQuery" type="text" placeholder="Search query..."/><input id="searchButton" class="button" type="button" value="Search" />
+        <input id="searchQuery" type="text" placeholder="Search query..." aria-label="Search query" /><input id="searchButton" class="button" type="button" value="Search" />
       </div>
     </div>
     <div class="searchBody">
       <div id="pager">
         <div class="totalResults"><span>Total results:</span><span id="totalResults">0</span></div>
         <div class="paging">
-          <input id="prevButton" class="arrowButton" type="button" disabled />
+          <input id="prevButton" class="arrowButton" type="button" aria-label="Previous Page" disabled />
           <span id="pageTotal">0/0</span>
-          <input id="nextButton" class="arrowButton" type="button" disabled />
+          <input id="nextButton" class="arrowButton" type="button" aria-label="Next Page" disabled />
         </div>
       </div>
       <div id="searchResults" class="searchResults" ></div>
