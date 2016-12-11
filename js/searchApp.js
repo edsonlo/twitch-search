@@ -85,25 +85,48 @@ class SearchApp {
 
     document.getElementById("totalResults").innerHTML = total;
     document.getElementById("pageTotal").innerHTML = `${pageNum}/${pages}`;
+    document.getElementById("pageTotalBottom").innerHTML = `${pageNum}/${pages}`;
 
-    this.updateButtonState(pageNum, pages, links.prev, links.next);
+    this.updatePageButtonState(pageNum, pages, links.prev, links.next);
   }
 
-  updateButtonState(pageNum, pages, prevLink, nextLink) {
+  updatePageButtonState(pageNum, pages, prevLink, nextLink) {
     let prevButton = document.getElementById("prevButton");
+    let prevButtonBottom = document.getElementById("prevButtonBottom");
     let nextButton = document.getElementById("nextButton");
-
+    let nextButtonBottom = document.getElementById("nextButtonBottom");
     let app = this;
 
-    pageNum === 1 ? prevButton.disabled = true : prevButton.disabled = false;
+    document.getElementById("pagerBottom").style.display = "block";
+
+    if(pageNum === 1) {
+      prevButton.disabled = true;
+      prevButtonBottom.disabled = true;
+    } else {
+      prevButton.disabled = false;
+      prevButtonBottom.disabled = false;
+    }
     if(prevLink !== null && prevLink !== undefined) {
       prevButton.onclick = function() {
         app.doSearch(`${prevLink}&client_id=${clientID}`);
       }
+      prevButtonBottom.onclick = function() {
+        app.doSearch(`${prevLink}&client_id=${clientID}`);
+      }
     }
-    pageNum === pages ? nextButton.disabled = true : nextButton.disabled = false;
+
+    if(pageNum === pages) {
+      nextButton.disabled = true;
+      nextButtonBottom.disabled = true;
+    } else {
+      nextButton.disabled = false;
+      nextButtonBottom.disabled = false;
+    }
     if(nextLink !== null && nextLink !== undefined) {
       nextButton.onclick = function() {
+        app.doSearch(`${nextLink}&client_id=${clientID}`);
+      }
+      nextButtonBottom.onclick = function() {
         app.doSearch(`${nextLink}&client_id=${clientID}`);
       }
     }

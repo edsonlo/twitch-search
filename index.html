@@ -18,11 +18,18 @@
         <div class="totalResults"><span>Total results:</span><span id="totalResults">0</span></div>
         <div class="paging">
           <input id="prevButton" class="arrowButton" type="button" aria-label="Previous Page" disabled />
-          <span id="pageTotal">0/0</span>
+          <span id="pageTotal" class="pageTotal">0/0</span>
           <input id="nextButton" class="arrowButton" type="button" aria-label="Next Page" disabled />
         </div>
       </div>
       <div id="searchResults" class="searchResults" ></div>
+      <div id="pagerBottom" align="right">
+        <div class="pagingBottom" id="pagingBottom">
+          <input id="prevButtonBottom" class="arrowButton" type="button" aria-label="Previous Page" disabled />
+          <span id="pageTotalBottom" class="pageTotal">0/0</span>
+          <input id="nextButtonBottom" class="arrowButton" type="button" aria-label="Next Page" disabled />
+        </div>
+      </div>
     </div>
   </div>
 
@@ -31,8 +38,6 @@
   <script type="text/javascript" src="js/searchApp.js" ></script>
   <script>
     let searchApp = new SearchApp("searchQuery", "searchButton");
-
-  //  document.getElementById("searchButton").addEventListener("click", () => {searchApp.runQuery(searchApp.createQuery())} );
   </script>
 </body>
 </html>
