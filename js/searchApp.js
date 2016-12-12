@@ -156,7 +156,7 @@ class SearchApp {
     // create a wrapper div so all streams get added at once
     let wrapperDiv = document.createElement("div");
     wrapperDiv.id = "resultsWrapper";
-    
+
     let streamDivs = streams.map(this.createStreamDiv);
     streamDivs.map(div => {
       wrapperDiv.appendChild(div);
@@ -191,11 +191,11 @@ class SearchApp {
     let infoDiv = document.createElement("div");
     infoDiv.className = "streamInfo";
     let streamDiv = document.createElement("div");
+    streamDiv.className = "streamHeader";
     let streamLink = document.createElement("a");
     streamLink.innerHTML = utils.escapeHTML(streamName);
     streamLink.href = linkUrl;
     streamLink.target = "_blank";
-    streamLink.className = "streamHeader";
     streamDiv.appendChild(streamLink);
     infoDiv.appendChild(streamDiv);
 

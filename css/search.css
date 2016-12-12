@@ -129,12 +129,17 @@ input::-ms-input-placeholder {
 
 .streamHeader {
   font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.streamHeader > a {
   text-decoration: none;
   color: #2A5DB0;
 }
 
 .streamBody {
   font-size: 16px;
+  margin-left: 5px;
 }
 
 .streamInfo {
