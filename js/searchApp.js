@@ -1,5 +1,6 @@
 const twitchURI = "https://api.twitch.tv/kraken/search/streams";
 const clientID = "5gf843clbfohl8wxwvw4h37653sdya6";
+const ENTER_KEY = 13;
 
 class SearchApp {
 
@@ -8,7 +9,7 @@ class SearchApp {
 
     document.getElementById(searchBoxId).addEventListener("keyup", (event) => {
       let key = event.which || event.keyCode;
-      if(key === 13) {
+      if(key === ENTER_KEY) {
         this.doSearch(this.createQuery());
       }
     });
@@ -20,16 +21,18 @@ class SearchApp {
   }
 
   doSearch(queryURI) {
-    this.runJSONPQuery(queryURI)
-    .then(this.processResults)
-    .catch((error) => {
-      console.log(error);
-      let errorDiv = document.createElement("div");
-      errorDiv.className = "streamTemplate";
-      errorDiv.innerHTML = "Oops! Something went wrong, try again";
-      this.clearResults();
-      document.getElementById("searchResults").appendChild(errorDiv);
-    });
+    if(queryURI) {
+      this.runJSONPQuery(queryURI)
+      .then(this.processResults)
+      .catch((error) => {
+        console.log(error);
+        let errorDiv = document.createElement("div");
+        errorDiv.className = "streamTemplate";
+        errorDiv.innerHTML = "Oops! Something went wrong, try again";
+        this.clearResults();
+        document.getElementById("searchResults").appendChild(errorDiv);
+      });
+    }
   }
 
   runJSONPQuery(queryURI) {
@@ -59,10 +62,8 @@ class SearchApp {
   createQuery() {
     let queryString = document.getElementById("searchQuery").value;
     if(queryString === null || queryString === "") {
-      alert('Please type a search string');
       return false;
     }
-  //  let queryURI = `${twitchURI}?q=${encodeURIComponent(queryString)}&client_id=${clientID}&callback=SearchApp.processResults`;
     let queryURI = `${twitchURI}?q=${encodeURIComponent(queryString)}&client_id=${clientID}`;
 
     return queryURI;
@@ -83,7 +84,7 @@ class SearchApp {
     }
     let pageNum = Math.floor(offset/10) + 1;
 
-    document.getElementById("totalResults").innerHTML = total;
+    document.getElementById("totalResults").innerHTML = utils.escapeHTML(total);
     document.getElementById("pageTotal").innerHTML = `${pageNum}/${pages}`;
     document.getElementById("pageTotalBottom").innerHTML = `${pageNum}/${pages}`;
 
@@ -134,9 +135,9 @@ class SearchApp {
   }
 
   clearResults() {
-    var searchResultsDiv = document.getElementById("searchResults")
+    let searchResultsDiv = document.getElementById("searchResults");
     while (searchResultsDiv.firstChild) {
-        searchResultsDiv.removeChild(searchResultsDiv.firstChild);
+      searchResultsDiv.removeChild(searchResultsDiv.firstChild);
     }
   }
 
@@ -164,12 +165,11 @@ class SearchApp {
 
     let div = document.createElement("div");
     div.className = "streamTemplate";
-    // image
+
     let imgLink = document.createElement("a");
     imgLink.href = linkUrl;
     imgLink.target = "_blank";
     imgLink.className = "streamImgLink";
-
     let img = document.createElement("img");
     img.src = stream.preview.medium;
     img.alt = `Stream ${streamName}`;
@@ -177,10 +177,8 @@ class SearchApp {
     imgLink.appendChild(img);
     div.appendChild(imgLink);
 
-    // stream info
     let infoDiv = document.createElement("div");
     infoDiv.className = "streamInfo";
-    // header link
     let streamDiv = document.createElement("div");
     let streamLink = document.createElement("a");
     streamLink.innerHTML = utils.escapeHTML(streamName);
@@ -189,7 +187,7 @@ class SearchApp {
     streamLink.className = "streamHeader";
     streamDiv.appendChild(streamLink);
     infoDiv.appendChild(streamDiv);
-    // body info
+
     let gameInfoDiv = document.createElement("div");
     let gameNameInfo = `${gameName} - ${totalViewers} viewers`;
     gameInfoDiv.innerHTML = utils.escapeHTML(gameNameInfo);
