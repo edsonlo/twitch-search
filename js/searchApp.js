@@ -9,20 +9,22 @@ class SearchApp {
 
     document.getElementById(searchBoxId).addEventListener("keyup", (event) => {
       let key = event.which || event.keyCode;
+      let isInitSearch = true;
       if(key === ENTER_KEY) {
-        this.doSearch(this.createQuery());
+        this.doSearch(this.createQuery(), isInitSearch);
       }
     });
     document.getElementById(searchButtonId).addEventListener("click", () => {
-      this.doSearch(this.createQuery());
+      let isInitSearch = true;
+      this.doSearch(this.createQuery(), isInitSearch);
     });
 
     this.processResults = this.processResults.bind(this);
   }
 
-  doSearch(queryURI) {
+  doSearch(queryURI, isInitSearch) {
     if(queryURI) {
-      this.runJSONPQuery(queryURI)
+      this.runJSONPQuery(queryURI, isInitSearch)
       .then(this.processResults)
       .catch((error) => {
         console.log(error);
@@ -35,7 +37,7 @@ class SearchApp {
     }
   }
 
-  runJSONPQuery(queryURI) {
+  runJSONPQuery(queryURI, isInitSearch) {
     return new Promise((resolve, reject) => {
       let callbackName = `processResults${this.counter++}`;
 
@@ -47,7 +49,7 @@ class SearchApp {
       document.getElementsByTagName("head")[0].appendChild(jsonpScript);
 
       window[callbackName] = function(data) {
-        if(data.streams && data.streams.length === 0) {
+        if(data.streams && data.streams.length === 0 && !isInitSearch) {
           reject(new Error("No data returned"));
         }
         resolve(data);
@@ -82,7 +84,7 @@ class SearchApp {
     if(curLink.indexOf('offset') != -1) {
       offset = this.calcOffset(curLink);
     }
-    let pageNum = Math.floor(offset/10) + 1;
+    let pageNum = (total === 0) ? 0 : Math.floor(offset/10) + 1;
 
     document.getElementById("totalResults").innerHTML = utils.escapeHTML(total);
     document.getElementById("pageTotal").innerHTML = `${pageNum}/${pages}`;
@@ -100,7 +102,7 @@ class SearchApp {
 
     document.getElementById("pagerBottom").style.display = "block";
 
-    if(pageNum === 1) {
+    if(pageNum <= 1) {
       prevButton.disabled = true;
       prevButtonBottom.disabled = true;
     } else {
@@ -142,10 +144,19 @@ class SearchApp {
   }
 
   showStreamInfo(streams) {
+    if(streams == null || streams.length === 0) {
+      let noResultsDiv = document.createElement("div");
+      noResultsDiv.className = "streamTemplate";
+      noResultsDiv.innerHTML = "No results, try again";
+      this.clearResults();
+      document.getElementById("searchResults").appendChild(noResultsDiv);
+      return;
+    }
+
     // create a wrapper div so all streams get added at once
     let wrapperDiv = document.createElement("div");
     wrapperDiv.id = "resultsWrapper";
-
+    
     let streamDivs = streams.map(this.createStreamDiv);
     streamDivs.map(div => {
       wrapperDiv.appendChild(div);
